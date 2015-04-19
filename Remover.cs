@@ -20,7 +20,6 @@ namespace RemoveStuckTrains
 
         private bool _initialized;
         private bool _terminated;
-        private bool _cleanslate;
 
         protected bool IsOverwatched()
         {
@@ -48,7 +47,6 @@ namespace RemoveStuckTrains
 
             _initialized = false;
             _terminated = false;
-            _cleanslate = false;
 
             base.OnCreated(threading);
         }
@@ -60,7 +58,6 @@ namespace RemoveStuckTrains
             if (!_helper.GameLoaded)
             {
                 _initialized = false;
-                _cleanslate = false;
                 return;
             }
 
@@ -88,37 +85,15 @@ namespace RemoveStuckTrains
                     SkylinesOverwatch.Settings.Instance.Enable.VehicleMonitor  = true;
 
                     _initialized = true;
-                    _cleanslate = false;
 
                     _helper.Log("Initialized");
-                }
-                else if (!_cleanslate)
-                {
-                    VehicleManager instance = Singleton<VehicleManager>.instance;
-
-                    List<ushort> trains = new List<ushort>();
-                    trains.AddRange(SkylinesOverwatch.Data.Instance.PassengerTrains);
-                    trains.AddRange(SkylinesOverwatch.Data.Instance.CargoTrains);
-
-                    foreach (ushort i in trains)
-                    {
-                        instance.ReleaseVehicle(i);
-
-                        SkylinesOverwatch.Helper.Instance.RequestVehicleRemoval(i);
-                    }
-
-                    _cleanslate = true;
                 }
                 else
                 {
                     VehicleManager instance = Singleton<VehicleManager>.instance;
                     InstanceID instanceID = new InstanceID();
 
-                    List<ushort> trains = new List<ushort>();
-                    trains.AddRange(SkylinesOverwatch.Data.Instance.PassengerTrains);
-                    trains.AddRange(SkylinesOverwatch.Data.Instance.CargoTrains);
-
-                    foreach (ushort i in trains)
+                    foreach (ushort i in SkylinesOverwatch.Data.Instance.Trains)
                     {
                         Vehicle train = instance.m_vehicles.m_buffer[(int)i];
 

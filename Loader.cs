@@ -8,7 +8,7 @@ using ColossalFramework.Math;
 using ColossalFramework.UI;
 using UnityEngine;
 
-namespace RemoveStuckTrains
+namespace RemoveStuckVehicles
 {
     public class Loader : LoadingExtensionBase
     {

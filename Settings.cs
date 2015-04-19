@@ -1,12 +1,12 @@
 ﻿using System;
 
-namespace RemoveStuckTrains
+namespace RemoveStuckVehicles
 {
     public sealed class Settings
     {
         private Settings()
         {
-            Tag = "[ARIS] Remove Stuck Trains";
+            Tag = "[ARIS] Remove Stuck Vehicles";
         }
 
         private static readonly Settings _Instance = new Settings();

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemoveStuckTrains", "RemoveStuckTrains.csproj", "{FE255200-F5CB-490D-B608-32A58FA27406}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemoveStuckVehicles", "RemoveStuckVehicles.csproj", "{FE255200-F5CB-490D-B608-32A58FA27406}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -10,7 +10,7 @@ using ColossalFramework.Math;
 using ColossalFramework.UI;
 using UnityEngine;
 
-namespace RemoveStuckTrains
+namespace RemoveStuckVehicles
 {
     internal sealed class Helper
     {

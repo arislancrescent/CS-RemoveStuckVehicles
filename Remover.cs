@@ -9,7 +9,7 @@ using ColossalFramework.Plugins;
 using ColossalFramework.UI;
 using UnityEngine;
 
-namespace RemoveStuckTrains
+namespace RemoveStuckVehicles
 {
     public class Remover : ThreadingExtensionBase
     {
@@ -82,7 +82,7 @@ namespace RemoveStuckTrains
                         return;
                     }
 
-                    SkylinesOverwatch.Settings.Instance.Enable.VehicleMonitor  = true;
+                    SkylinesOverwatch.Settings.Instance.Enable.VehicleMonitor = true;
 
                     _initialized = true;
 
@@ -92,13 +92,14 @@ namespace RemoveStuckTrains
                 {
                     VehicleManager instance = Singleton<VehicleManager>.instance;
                     InstanceID instanceID = new InstanceID();
+                    SkylinesOverwatch.Data data = SkylinesOverwatch.Data.Instance;
 
-                    foreach (ushort i in SkylinesOverwatch.Data.Instance.Trains)
+                    foreach (ushort i in data.VehiclesUpdated)
                     {
-                        Vehicle train = instance.m_vehicles.m_buffer[(int)i];
+                        Vehicle v = instance.m_vehicles.m_buffer[(int)i];
 
-                        bool isBlocked = train.m_blockCounter == 255;
-                        bool isConfused = train.Info.m_vehicleAI.GetLocalizedStatus(i, ref train, out instanceID) == _confused; 
+                        bool isBlocked = data.isCar(i) ? false : v.m_blockCounter == 255; // we will let the game decide when to remove a blocked car
+                        bool isConfused = v.Info.m_vehicleAI.GetLocalizedStatus(i, ref v, out instanceID) == _confused; 
 
                         if (isBlocked || isConfused)
                         {

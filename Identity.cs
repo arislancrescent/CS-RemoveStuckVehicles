@@ -1,6 +1,6 @@
 ﻿using ICities;
 
-namespace RemoveStuckTrains
+namespace RemoveStuckVehicles
 {
     public class Identity : IUserMod
     {
@@ -11,7 +11,7 @@ namespace RemoveStuckTrains
 
         public string Description
         {
-            get { return "Detects and removes all trains that are stuck."; }
+            get { return "Detects and removes all vehicles that are confused or blocked."; }
         }
     }
 }

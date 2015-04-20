@@ -1,5 +1,5 @@
-# Remove Stuck Trains
-Steam Workshop: [[ARIS] Remove Stuck Trains](http://steamcommunity.com/sharedfiles/filedetails/?id=428094792)  
+# Remove Stuck Vehicles
+Steam Workshop: [[ARIS] Remove Stuck Vehicles](http://steamcommunity.com/sharedfiles/filedetails/?id=428094792)  
 Requires: [[ARIS] Skylines Overwatch](https://github.com/arislancrescent/CS-SkylinesOverwatch)
 
-Detects and removes all stuck trains.  
+Detects and removes all vehicles that are confused or blocked.  

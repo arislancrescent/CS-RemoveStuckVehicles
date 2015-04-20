@@ -98,7 +98,7 @@ namespace RemoveStuckVehicles
                     {
                         Vehicle v = instance.m_vehicles.m_buffer[(int)i];
 
-                        bool isBlocked = data.isCar(i) ? false : v.m_blockCounter == 255; // we will let the game decide when to remove a blocked car
+                        bool isBlocked = data.IsCar(i) ? false : v.m_blockCounter == 255; // we will let the game decide when to remove a blocked car
                         bool isConfused = v.Info.m_vehicleAI.GetLocalizedStatus(i, ref v, out instanceID) == _confused; 
 
                         if (isBlocked || isConfused)

@@ -101,12 +101,32 @@ namespace RemoveStuckVehicles
                         bool isBlocked = data.IsCar(i) ? false : v.m_blockCounter == 255; // we will let the game decide when to remove a blocked car
                         bool isConfused = v.Info.m_vehicleAI.GetLocalizedStatus(i, ref v, out instanceID) == _confused; 
 
-                        if (isBlocked || isConfused)
-                        {
-                            instance.ReleaseVehicle(i);
+                        if (!isBlocked && !isConfused)
+                            continue;
+                        
+                        HashSet<ushort> removals = new HashSet<ushort>();
+                        ushort current = i;
 
-                            SkylinesOverwatch.Helper.Instance.RequestVehicleRemoval(i);
+                        while (current != 0)
+                        {
+                            removals.Add(current);
+
+                            current = instance.m_vehicles.m_buffer[(int)current].m_trailingVehicle;
                         }
+
+                        current = v.m_firstCargo;
+
+                        while (current != 0)
+                        {
+                            removals.Add(current);
+
+                            current = instance.m_vehicles.m_buffer[(int)current].m_nextCargo;
+                        }
+
+                        foreach (ushort x in removals)
+                            instance.ReleaseVehicle(x);
+
+                        SkylinesOverwatch.Helper.Instance.RequestVehicleRemoval(i);
                     }
                 }
             }

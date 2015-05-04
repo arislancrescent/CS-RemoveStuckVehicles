@@ -11,7 +11,7 @@ namespace RemoveStuckVehicles
 
         public string Description
         {
-            get { return "Detects and removes all vehicles that are confused or blocked."; }
+            get { return "Detects and removes vehicles that are confused or blocked."; }
         }
     }
 }

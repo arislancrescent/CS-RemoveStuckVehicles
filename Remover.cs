@@ -17,6 +17,8 @@ namespace RemoveStuckVehicles
         private Helper _helper;
 
         private string _confused = ColossalFramework.Globalization.Locale.Get("VEHICLE_STATUS_CONFUSED");
+        private InstanceID _selected;
+        private InstanceID _dummy;
 
         private bool _initialized;
         private bool _terminated;
@@ -44,6 +46,9 @@ namespace RemoveStuckVehicles
         {
             _settings = Settings.Instance;
             _helper = Helper.Instance;
+
+            _selected = default(InstanceID);
+            _dummy = default(InstanceID);
 
             _initialized = false;
             _terminated = false;
@@ -90,6 +95,16 @@ namespace RemoveStuckVehicles
                 }
                 else
                 {
+                    if (WorldInfoPanel.AnyWorldInfoPanelOpen())
+                    {
+                        _selected = WorldInfoPanel.GetCurrentInstanceID();
+
+                        if (_selected.IsEmpty || _selected.Vehicle == 0)
+                            _selected = default(InstanceID);
+                    }
+                    else
+                        _selected = default(InstanceID);
+                    
                     VehicleManager instance = Singleton<VehicleManager>.instance;
                     InstanceID instanceID = new InstanceID();
                     SkylinesOverwatch.Data data = SkylinesOverwatch.Data.Instance;
@@ -98,41 +113,24 @@ namespace RemoveStuckVehicles
                     {
                         Vehicle v = instance.m_vehicles.m_buffer[(int)i];
 
-                        bool isBlocked = data.IsCar(i) ? false : v.m_blockCounter == 255; // we will let the game decide when to remove a blocked car
+                        bool isBlocked = !data.IsCar(i) && v.m_blockCounter == 255; // we will let the game decide when to remove a blocked car
                         bool isConfused = v.Info.m_vehicleAI.GetLocalizedStatus(i, ref v, out instanceID) == _confused; 
 
                         if (!isBlocked && !isConfused)
                             continue;
-                        
-                        HashSet<ushort> removals = new HashSet<ushort>();
-                        ushort current = i;
 
-                        while (current != 0)
-                        {
-                            removals.Add(current);
-
-                            current = instance.m_vehicles.m_buffer[(int)current].m_trailingVehicle;
-                        }
-
-                        current = v.m_firstCargo;
-
-                        while (current != 0)
-                        {
-                            removals.Add(current);
-
-                            current = instance.m_vehicles.m_buffer[(int)current].m_nextCargo;
-                        }
-
-                        foreach (ushort x in removals)
-                            instance.ReleaseVehicle(x);
-
-                        SkylinesOverwatch.Helper.Instance.RequestVehicleRemoval(i);
+                        RemoveVehicle(i);
                     }
+
+                    foreach (ushort i in _helper.ManualRemovalRequests)
+                        RemoveVehicle(i);
+
+                    _helper.ManualRemovalRequests.Clear();
                 }
             }
             catch (Exception e)
             {
-                string error = "Failed to initialize\r\n";
+                string error = String.Format("Failed to {0}\r\n", !_initialized ? "initialize" : "updated");
                 error += String.Format("Error: {0}\r\n", e.Message);
                 error += "\r\n";
                 error += "==== STACK TRACE ====\r\n";
@@ -140,7 +138,8 @@ namespace RemoveStuckVehicles
 
                 _helper.Log(error);
 
-                _terminated = true;
+                if (!_initialized)
+                    _terminated = true;
             }
 
             base.OnUpdate(realTimeDelta, simulationTimeDelta);
@@ -152,6 +151,65 @@ namespace RemoveStuckVehicles
             _terminated = false;
 
             base.OnReleased();
+        }
+
+        private void RemoveVehicle(ushort vehicle)
+        {
+            if (!_selected.IsEmpty && _selected.Vehicle == vehicle)
+            {
+                WorldInfoPanel.HideAllWorldInfoPanels();
+
+                if (!InstanceManager.IsValid(_dummy))
+                {
+                    _dummy = default(InstanceID);
+                    _dummy.Type = InstanceType.Building;
+                    _dummy.Building = SkylinesOverwatch.Data.Instance.Buildings[0];
+                }
+
+                Singleton<InstanceManager>.instance.SelectInstance(_dummy);
+                Singleton<InstanceManager>.instance.FollowInstance(_dummy);
+            }
+
+            VehicleManager instance = Singleton<VehicleManager>.instance;
+
+            HashSet<ushort> removals = new HashSet<ushort>();
+            ushort current = vehicle;
+
+            while (current != 0)
+            {
+                removals.Add(current);
+
+                current = instance.m_vehicles.m_buffer[(int)current].m_trailingVehicle;
+            }
+
+            current = instance.m_vehicles.m_buffer[(int)vehicle].m_firstCargo;
+
+            while (current != 0)
+            {
+                removals.Add(current);
+
+                current = instance.m_vehicles.m_buffer[(int)current].m_nextCargo;
+            }
+
+            foreach (ushort i in removals)
+            {
+                try
+                {
+                    instance.ReleaseVehicle(i);
+                }
+                catch (Exception e)
+                {
+                    string error = String.Format("Failed to release {0}\r\n", i);
+                    error += String.Format("Error: {0}\r\n", e.Message);
+                    error += "\r\n";
+                    error += "==== STACK TRACE ====\r\n";
+                    error += e.StackTrace;
+
+                    _helper.Log(error);
+                }
+            }
+
+            SkylinesOverwatch.Helper.Instance.RequestVehicleRemoval(vehicle);
         }
     }
 }

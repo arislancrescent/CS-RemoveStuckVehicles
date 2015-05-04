@@ -17,16 +17,18 @@ namespace RemoveStuckVehicles
         private Helper()
         {
             GameLoaded = false;
+            ManualRemovalRequests = new HashSet<ushort>();
         }
 
         private static readonly Helper _Instance = new Helper();
         public static Helper Instance { get { return _Instance; } }
 
         internal bool GameLoaded;
+        internal HashSet<ushort> ManualRemovalRequests;
 
         public void Log(string message)
         {
-            DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, String.Format("{0}: {1}", Settings.Instance.Tag, message));
+            Debug.Log(String.Format("{0}: {1}", Settings.Instance.Tag, message));
         }
     }
 }

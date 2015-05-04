@@ -159,11 +159,18 @@ namespace RemoveStuckVehicles
             {
                 WorldInfoPanel.HideAllWorldInfoPanels();
 
-                if (!InstanceManager.IsValid(_dummy))
+                if (!InstanceManager.IsValid(_dummy) || _dummy.Vehicle == vehicle)
                 {
                     _dummy = default(InstanceID);
-                    _dummy.Type = InstanceType.Building;
-                    _dummy.Building = SkylinesOverwatch.Data.Instance.Buildings[0];
+                    _dummy.Type = InstanceType.Vehicle;
+
+                    foreach (ushort i in SkylinesOverwatch.Data.Instance.Vehicles)
+                    {
+                        if (i == vehicle) continue;
+
+                        _dummy.Vehicle = i;
+                        break;
+                    }
                 }
 
                 Singleton<InstanceManager>.instance.SelectInstance(_dummy);

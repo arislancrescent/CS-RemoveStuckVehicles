@@ -65,6 +65,26 @@ namespace RemoveStuckVehicles
             }
         }
 
+        private void Update()
+        {
+            if (!WorldInfoPanel.AnyWorldInfoPanelOpen()) return;
+
+            InstanceID id = WorldInfoPanel.GetCurrentInstanceID();
+
+            if (id.IsEmpty) return;
+
+            if (id.Vehicle == 0)
+            {
+                foreach (UIButton button in _buttons)
+                    button.Hide();
+            }
+            else
+            {
+                foreach (UIButton button in _buttons)
+                    button.Show();
+            }
+        }
+
         private void OnDestroy()
         {
             foreach (UIButton button in _buttons)

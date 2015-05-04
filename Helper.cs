@@ -30,5 +30,11 @@ namespace RemoveStuckVehicles
         {
             Debug.Log(String.Format("{0}: {1}", Settings.Instance.Tag, message));
         }
+
+        public void NotifyPlayer(string message)
+        {
+            DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, String.Format("{0}: {1}", Settings.Instance.Tag, message));
+            Log(message);
+        }
     }
 }

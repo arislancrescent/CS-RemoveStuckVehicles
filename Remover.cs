@@ -91,7 +91,7 @@ namespace RemoveStuckVehicles
 
                     _initialized = true;
 
-                    _helper.Log("Initialized");
+                    _helper.NotifyPlayer("Initialized");
                 }
                 else
                 {

@@ -81,7 +81,7 @@ namespace RemoveStuckVehicles
                 {
                     if (!IsOverwatched())
                     {
-                        _helper.Log("Skylines Overwatch not found. Terminating...");
+                        _helper.NotifyPlayer("Skylines Overwatch not found. Terminating...");
                         _terminated = true;
 
                         return;
